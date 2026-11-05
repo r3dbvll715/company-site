@@ -82,3 +82,4 @@ company-site/
 ## 📄 License
 
 MIT
+
