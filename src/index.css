@@ -3,66 +3,236 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #030712;
-    color: #f3f4f6;
-    overflow-x: hidden;
+  html, body {
+    background-color: var(--p-bg, #0a0d14);
+    color: var(--p-ink, #f0f4f8);
+    font-family: var(--font-text, "Host Grotesk", sans-serif);
+    margin: 0;
+    padding: 0;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', sans-serif;
+  h1 {
+    font-family: var(--font-display, "Host Grotesk", sans-serif);
+    font-weight: var(--display-weight, 500);
+    letter-spacing: var(--display-tracking, -0.035em);
+    font-size: var(--t-h1, clamp(40px, 3.2vw + 24px, 72px));
+    line-height: 1.05;
+    margin: 0;
+    color: var(--p-ink, #f0f4f8);
+  }
+
+  h2, .t-h2 {
+    font-family: var(--font-display, "Host Grotesk", sans-serif);
+    font-weight: var(--display-weight, 500);
+    letter-spacing: var(--display-tracking, -0.035em);
+    font-size: var(--t-h2, clamp(30px, 1.72vw + 23.3px, 48px));
+    line-height: 1.1;
+    margin: 0;
+    color: var(--p-ink, #f0f4f8);
+  }
+
+  h3, .t-h3 {
+    font-family: var(--font-display, "Host Grotesk", sans-serif);
+    font-weight: var(--display-weight, 500);
+    letter-spacing: var(--display-tracking, -0.035em);
+    font-size: var(--t-h3, 18px);
+    line-height: 1.25;
+    margin: 0;
+    color: var(--p-ink, #f0f4f8);
+  }
+
+  h4, h5, h6 {
+    font-family: var(--font-display, "Host Grotesk", sans-serif);
+    font-weight: var(--display-weight, 500);
+    letter-spacing: var(--display-tracking, -0.035em);
+    margin: 0;
+    color: var(--p-ink, #f0f4f8);
+  }
+
+  p {
+    margin: 0;
+    color: var(--p-muted, #a4adbc);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 }
 
-/* Custom modern glassmorphism */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Allow sections to expand naturally to fit rich content without overlapping */
+main > :is(section, .section),
+main > :is(.hero, .section--hero),
+footer.closing {
+  height: auto !important;
+  min-height: 100svh !important;
 }
 
-.glass-panel-hover {
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+main > :is(section, .section) > :is(.wrap, .container),
+footer.closing > .wrap {
+  height: auto !important;
+  min-height: 100% !important;
 }
 
-.glass-panel-hover:hover {
-  background: rgba(30, 41, 59, 0.7);
-  border-color: rgba(56, 189, 248, 0.3);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 30px -10px rgba(12, 135, 235, 0.2);
+.fill {
+  flex: initial !important;
+  height: auto !important;
+  min-height: auto !important;
 }
 
-/* Radiant glow gradients */
-.glow-gradient {
-  background: radial-gradient(circle at 50% 0%, rgba(14, 165, 233, 0.15) 0%, rgba(121, 40, 202, 0.05) 50%, transparent 100%);
+/* Neutralize Tailwind start-* utilities colliding with taste-skill grid column start classes */
+.start-1, .start-2, .start-3, .start-4, .start-5, .start-6, .start-7, .start-8, .start-9, .start-10 {
+  inset-inline-start: auto !important;
+  left: auto !important;
 }
 
-.text-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Responsive grid stacking on tablet and mobile viewports (< 1024px) */
+@media (max-width: 1023px) {
+  .hero-text.hero-split,
+  .section .grid.fill {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 32px !important;
+  }
+  .hero-split > .hero-visual,
+  .section .span-6.start-7 {
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
 }
 
-.text-gradient-brand {
-  background: linear-gradient(135deg, #38bdf8 0%, #0c87eb 50%, #818cf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Mobile rhythm and section fit (390px viewport) */
+@media (max-width: 639px) {
+  /* Prevent duplicate text and tight spacing in split columns */
+  .split-col > .t-lead {
+    display: none;
+  }
+  .rows > li {
+    padding-block: 8px;
+  }
+  #services .grid.fill,
+  #team .grid.fill {
+    gap: 16px;
+  }
+  #services .frame--fill,
+  #team .frame--fill {
+    min-height: 215px;
+  }
+
+  /* Portfolio cards on 1-screen phone rhythm */
+  #work .grid {
+    row-gap: 12px;
+  }
+  #work .card {
+    --c-pad: 14px;
+    padding: var(--c-pad);
+  }
+  #work .card > h3 {
+    font-size: 16px;
+    line-height: 22px;
+  }
+  #work .card > p {
+    font-size: 13.5px;
+    line-height: 18px;
+    margin: 4px 0 0;
+  }
+  #work .card > .panel {
+    --p-h: 175px;
+    min-height: 175px;
+    margin-top: 10px;
+  }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+/* ── transitions.dev motion tokens & micro-interactions ───────── */
+:root {
+  --duration-stagger: 40ms;
+  --duration-micro: 80ms;
+  --duration-quick: 150ms;
+  --duration-fast: 250ms;
+  --duration-medium: 350ms;
+  --duration-slow: 400ms;
+  --duration-very-slow: 500ms;
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: ease-in-out;
+  --distance-micro: 4px;
+  --distance-small: 6px;
+  --distance-base: 8px;
+
+  /* Button / learn-more arrow transitions */
+  --learn-shift: 3px;
+  --learn-in: 250ms;
+  --learn-out: 250ms;
+  --learn-ease: var(--ease-smooth-out);
 }
-::-webkit-scrollbar-track {
-  background: #030712;
+
+/* Button & micro-interaction transitions */
+.btn {
+  transition: transform var(--duration-fast) var(--ease-smooth-out),
+              background-color var(--duration-fast) var(--ease-smooth-out),
+              border-color var(--duration-fast) var(--ease-smooth-out),
+              box-shadow var(--duration-fast) var(--ease-smooth-out) !important;
 }
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 9999px;
+
+.btn .m-arrow {
+  display: inline-block;
+  transition: transform var(--learn-in) var(--learn-ease);
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+
+.btn:hover .m-arrow {
+  transform: translateX(var(--learn-shift));
 }
+
+.card {
+  transition: transform var(--duration-fast) var(--ease-smooth-out),
+              box-shadow var(--duration-fast) var(--ease-smooth-out),
+              border-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.rows > li {
+  transition: border-color var(--duration-fast) var(--ease-smooth-out),
+              background-color var(--duration-fast) var(--ease-smooth-out);
+}
+
+.nav__links a {
+  transition: color var(--duration-quick) var(--ease-smooth-out),
+              opacity var(--duration-quick) var(--ease-smooth-out);
+}
+
+/* Fix tight-leading on footer lede text */
+.closing__links .footer__lede {
+  line-height: 1.55 !important;
+}
+
+/* Modal animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: modalFadeIn var(--duration-fast, 250ms) var(--ease-smooth-out) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 

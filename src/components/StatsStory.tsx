@@ -7,42 +7,39 @@ export const StatsStory: React.FC = () => {
     {
       icon: <Cpu className="w-5 h-5 text-brand-400" />,
       title: 'Senior Engineering Only',
-      desc: 'No junior handoffs. Every line of frontend and backend code is written and reviewed by seasoned veterans.',
+      desc: 'Zero junior handoffs. Every architectural decision and code pull request is engineered and reviewed by staff-level practitioners.',
     },
     {
       icon: <Zap className="w-5 h-5 text-accent-cyan" />,
-      title: 'Obsessive Performance',
-      desc: 'Sub-second loads, 99+ Lighthouse scores, clean bundles, and zero framework bloat are non-negotiable.',
+      title: 'Sub-15ms Latency Mindset',
+      desc: 'Sub-second initial loads, 99+ Core Web Vitals, and zero unnecessary runtime bloat are uncompromising baselines.',
     },
     {
       icon: <ShieldCheck className="w-5 h-5 text-emerald-400" />,
-      title: 'Complete Ownership',
-      desc: 'Clean documentation, automated CI/CD pipelines, and 100% intellectual property transfer to your team upon launch.',
+      title: '100% IP & Asset Ownership',
+      desc: 'Clean automated documentation, exhaustive test suites, reproducible CI/CD, and immediate IP assignment upon milestone delivery.',
     },
     {
       icon: <Target className="w-5 h-5 text-indigo-400" />,
-      title: 'Outcome-Driven Alignment',
-      desc: 'We measure success by conversions, user retention, and platform uptime, not just arbitrary ticket completion.',
+      title: 'Aligned to Enterprise Value',
+      desc: 'We calibrate our engineering against your business metrics: conversion velocity, infrastructure cost efficiency, and customer retention.',
     },
   ];
 
   return (
-    <section id="story" className="py-24 relative overflow-hidden">
-      {/* Background radial ambient */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-brand-600/10 blur-[120px] rounded-full pointer-events-none -z-10" />
-
+    <section id="story" className="py-28 relative overflow-hidden border-t border-white/[0.06]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Stats Grid */}
+        {/* Top Stats Metric Strip */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
           {STATS.map((stat, idx) => (
             <div
               key={idx}
-              className="glass-panel rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-slate-800/80 group hover:border-brand-500/40 transition-colors"
+              className="p-6 sm:p-8 rounded-2xl bg-slate-900/40 border border-white/[0.07] relative overflow-hidden group hover:border-white/[0.15] transition-colors"
             >
-              <div className="font-display text-3xl sm:text-5xl font-extrabold text-white mb-2 text-gradient-brand">
+              <div className="font-mono text-3xl sm:text-5xl font-extrabold text-white mb-2 tracking-tight">
                 {stat.value}
               </div>
-              <div className="text-sm font-semibold text-slate-200 uppercase tracking-wider mb-1">
+              <div className="text-xs font-mono font-semibold text-slate-300 uppercase tracking-wider mb-2">
                 {stat.label}
               </div>
               <p className="text-xs text-slate-400 leading-relaxed">
@@ -55,39 +52,46 @@ export const StatsStory: React.FC = () => {
         {/* Narrative & Philosophy */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-5">
-            <span className="text-xs uppercase tracking-widest font-semibold text-brand-400 bg-brand-950/60 border border-brand-800/60 px-3 py-1 rounded-full">
-              Our Ethos
-            </span>
-            <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white mt-4 mb-6 leading-tight">
-              We build software as if our own name is on every commit.
+            <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-brand-400 mb-3">
+              <span>03</span>
+              <span className="text-slate-600">//</span>
+              <span>STUDIO METHODOLOGY</span>
+            </div>
+            <h2 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-white mt-2 mb-6 leading-tight">
+              We build software with the care of true artisans.
             </h2>
-            <p className="text-slate-300 text-base leading-relaxed mb-6">
-              Founded by former staff engineers and design directors who grew tired of generic agency bureaucracy, NEXUS operates as an agile SWAT team.
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+              Founded by former principal systems engineers and design leads who grew disillusioned with agency layers and slow sprints, NEXUS operates as an agile, high-dexterity engineering team.
             </p>
             <p className="text-slate-400 text-sm leading-relaxed mb-8">
-              We embed deeply with your founders and technical stakeholders, eliminating fluff and shipping working, revenue-generating software into production every Friday.
+              We embed directly within your technical leadership, eliminating intermediary overhead and shipping tested, production-grade code on fixed weekly iterations.
             </p>
 
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800">
-              <p className="text-xs text-slate-400 italic">
-                “Quality is not an accident; it is the deliberate refusal to ship mediocre code.”
+            <div className="p-5 rounded-2xl bg-[#090d16] border border-white/[0.08]">
+              <p className="text-xs text-slate-300 italic leading-relaxed">
+                “Quality is not an accident. It is the uncompromising refusal to compromise on technical integrity and aesthetic clarity.”
               </p>
-              <span className="block mt-2 text-xs font-semibold text-brand-300">
-                — Alexandre Martins, Technical Director
-              </span>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-xs font-mono font-semibold text-brand-400">
+                  Alexandre Martins
+                </span>
+                <span className="text-[11px] font-mono text-slate-500">
+                  Technical Director
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
             {values.map((v, i) => (
               <div
                 key={i}
-                className="glass-panel rounded-xl p-6 border border-slate-800/80 hover:border-slate-700 transition-colors"
+                className="p-6 rounded-2xl bg-slate-900/40 border border-white/[0.07] hover:border-white/[0.15] transition-colors"
               >
-                <div className="w-10 h-10 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center mb-4">
+                <div className="w-10 h-10 rounded-xl bg-slate-950 border border-white/[0.08] flex items-center justify-center mb-4">
                   {v.icon}
                 </div>
-                <h3 className="font-display font-bold text-lg text-white mb-2">
+                <h3 className="font-display font-bold text-base text-white mb-2">
                   {v.title}
                 </h3>
                 <p className="text-xs text-slate-400 leading-relaxed">
@@ -101,4 +105,3 @@ export const StatsStory: React.FC = () => {
     </section>
   );
 };
-
