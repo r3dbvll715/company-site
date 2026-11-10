@@ -57,6 +57,22 @@
         --ease-entrance:        cubic-bezier(0.2, 0, 0, 1);
         --ease-out-cubic:       cubic-bezier(0.33, 1, 0.68, 1);
         --status-green:         #34d399;
+
+        /* transitions-dev tokens: 19-card-tilt & 15-shimmer-text & 18-texts-reveal */
+        --tilt-perspective:     1000px;
+        --tilt-return:          1000ms;
+        --tilt-return-ease:     cubic-bezier(0.22, 1, 0.36, 1);
+        --tilt-follow:          400ms;
+        --tilt-follow-ease:     cubic-bezier(0.22, 1, 0.36, 1);
+        --tilt-glare-opacity:   0.34;
+        --tilt-glare-fade:      300ms;
+        --tilt-glare-ease:      cubic-bezier(0.22, 1, 0.36, 1);
+        --shimmer-dur:          2800ms;
+        --shimmer-base:         #b9becf;
+        --shimmer-highlight:    #ffffff;
+        --shimmer-band:         350%;
+        --shimmer-ease:         linear;
+        --stagger-blur:         3px;
       }
 
       body {
@@ -322,6 +338,44 @@
         }
       }
 
+      /* ── transitions-dev: Shimmer Text (15-shimmer-text) ─────────── */
+      .t-shimmer {
+        position: relative;
+        display: inline-block;
+        color: var(--shimmer-base);
+      }
+
+      .t-shimmer::before {
+        content: attr(data-text);
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: linear-gradient(
+          90deg,
+          transparent          0%,
+          transparent         38%,
+          var(--shimmer-highlight) 50%,
+          transparent         62%,
+          transparent        100%
+        );
+        background-size: var(--shimmer-band) 100%;
+        background-repeat: no-repeat;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+        animation: t-shimmer var(--shimmer-dur) var(--shimmer-ease) infinite;
+      }
+
+      @keyframes t-shimmer {
+        0%   { background-position: 100% 0; }
+        100% { background-position: 0% 0; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .t-shimmer::before { animation: none !important; }
+      }
+
       /* Heading */
       .hero-heading {
         margin-top: 1.25rem;
@@ -510,7 +564,7 @@
         }
       }
 
-      /* ── Portfolio Section ──────────────────────── */
+      /* ── Portfolio Section & transitions-dev Card Tilt (19-card-tilt) ── */
       .portfolio-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -523,22 +577,77 @@
         }
       }
 
+      /* Flat pointer tracking wrapper (never transforms, prevents edge flicker) */
+      .t-tilt {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        touch-action: none;
+        perspective: var(--tilt-perspective);
+      }
+
+      /* 3D Tilting Card */
+      .t-tilt-card {
+        position: relative;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        transform:
+          perspective(var(--tilt-perspective))
+          rotateX(var(--tilt-rx, 0deg))
+          rotateY(var(--tilt-ry, 0deg));
+        transform-style: preserve-3d;
+        transition: transform var(--tilt-return) var(--tilt-return-ease), border-color 300ms var(--ease-entrance), box-shadow 300ms var(--ease-entrance);
+        will-change: transform;
+      }
+
+      .t-tilt-card.is-tilting {
+        transition: transform var(--tilt-follow) var(--tilt-follow-ease), border-color 300ms var(--ease-entrance), box-shadow 300ms var(--ease-entrance);
+      }
+
+      /* Cursor-tracked specular glare overlay (screen blend) */
+      .t-tilt-glare {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 10;
+        mix-blend-mode: screen;
+        border-radius: inherit;
+        background:
+          radial-gradient(circle 120px at var(--tilt-gx, 50%) var(--tilt-gy, 50%),
+            rgba(255,255,255,0.48), rgba(255,255,255,0.08) 52%, rgba(255,255,255,0) 84%),
+          radial-gradient(circle 240px at var(--tilt-gx, 50%) var(--tilt-gy, 50%),
+            rgba(255,255,255,0.22), rgba(255,255,255,0.04) 58%, rgba(255,255,255,0) 78%),
+          radial-gradient(circle 420px at var(--tilt-gx, 50%) var(--tilt-gy, 50%),
+            rgba(255,255,255,0.10), rgba(255,255,255,0) 88%);
+        transition: opacity var(--tilt-glare-fade) var(--tilt-glare-ease);
+      }
+
+      .t-tilt.is-hover .t-tilt-glare {
+        opacity: var(--tilt-glare-opacity);
+      }
+
       .project-card {
         background: var(--glass-card);
         border: 1px solid var(--glass-border);
         border-radius: 1.5rem;
-        overflow: hidden;
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        transition: transform 300ms var(--ease-entrance), border-color 300ms var(--ease-entrance), box-shadow 300ms var(--ease-entrance);
         display: flex;
         flex-direction: column;
+        flex: 1;
+        width: 100%;
+        transition: border-color 300ms var(--ease-entrance), box-shadow 300ms var(--ease-entrance);
       }
 
-      .project-card:hover {
-        transform: translateY(-4px);
+      .t-tilt.is-hover .project-card {
         border-color: var(--glass-border-hover);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .t-tilt-card { transform: none !important; transition: none !important; }
+        .t-tilt-glare { display: none !important; }
       }
 
       /* Mock Browser Window Visual */
@@ -1095,9 +1204,11 @@
         display: inline-block;
         opacity: 0;
         transform: translateY(var(--from-y, 20px));
+        filter: blur(var(--stagger-blur, 3px));
         transition: opacity var(--duration, 700ms) var(--ease-out-cubic) var(--delay, 0ms),
-                    transform var(--duration, 700ms) var(--ease-out-cubic) var(--delay, 0ms);
-        will-change: opacity, transform;
+                    transform var(--duration, 700ms) var(--ease-out-cubic) var(--delay, 0ms),
+                    filter var(--duration, 700ms) var(--ease-out-cubic) var(--delay, 0ms);
+        will-change: opacity, transform, filter;
       }
 
       /* Active Revealed State */
@@ -1112,6 +1223,7 @@
       .is-revealed .word-reveal {
         opacity: 1;
         transform: translateY(0);
+        filter: blur(0);
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -1164,7 +1276,7 @@
           <!-- Badge Pill -->
           <p class="badge-pill reveal-badge">
             <span>✨</span>
-            <span>Estúdio de Design & Engenharia Web</span>
+            <span class="t-shimmer" data-text="Estúdio de Design & Engenharia Web">Estúdio de Design & Engenharia Web</span>
           </p>
 
           <!-- Heading (word-by-word reveal) -->
@@ -1203,109 +1315,121 @@
 
         <div class="portfolio-grid">
           <!-- Card 1 -->
-          <article class="project-card">
-            <div class="project-screen">
-              <div class="browser-bar">
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-url">casadamininha.com</div>
+          <div class="t-tilt">
+            <article class="project-card t-tilt-card">
+              <div class="project-screen">
+                <div class="browser-bar">
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-url">casadamininha.com</div>
+                </div>
+                <div class="screen-stat-wrap" style="height: 100%; padding: 0;">
+                  <img src="https://i.postimg.cc/5N6FBr2v/logomini.png" alt="Casa da Mininha website preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.75rem;">
+                </div>
               </div>
-              <div class="screen-stat-wrap" style="height: 100%; padding: 0;">
-                <img src="https://i.postimg.cc/5N6FBr2v/logomini.png" alt="Casa da Mininha website preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0.75rem;">
+              <div class="project-body">
+                <span class="project-category">Turismo & Hospitalidade</span>
+                <h3 class="project-name">Casa da Mininha</h3>
+                <p class="project-desc">Website de alojamento local para casa de férias histórica em Ponte da Barca, com tours virtuais, reserva direta e integração com Airbnb/Booking.</p>
+                <div class="project-tags">
+                  <span class="tag-pill">React</span>
+                  <span class="tag-pill">TypeScript</span>
+                  <span class="tag-pill">Netlify</span>
+                  <span class="tag-pill">Playfair Display</span>
+                  <span class="tag-pill">Schema.org LodgingBusiness</span>
+                </div>
               </div>
-            </div>
-            <div class="project-body">
-              <span class="project-category">Turismo & Hospitalidade</span>
-              <h3 class="project-name">Casa da Mininha</h3>
-              <p class="project-desc">Website de alojamento local para casa de férias histórica em Ponte da Barca, com tours virtuais, reserva direta e integração com Airbnb/Booking.</p>
-              <div class="project-tags">
-                <span class="tag-pill">React</span>
-                <span class="tag-pill">TypeScript</span>
-                <span class="tag-pill">Netlify</span>
-                <span class="tag-pill">Playfair Display</span>
-                <span class="tag-pill">Schema.org LodgingBusiness</span>
-              </div>
-            </div>
-          </article>
+              <div class="t-tilt-glare" aria-hidden="true"></div>
+            </article>
+          </div>
 
           <!-- Card 2 -->
-          <article class="project-card">
-            <div class="project-screen">
-              <div class="browser-bar">
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-url">kronos-ai.tech</div>
+          <div class="t-tilt">
+            <article class="project-card t-tilt-card">
+              <div class="project-screen">
+                <div class="browser-bar">
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-url">kronos-ai.tech</div>
+                </div>
+                <div class="screen-stat-wrap">
+                  <div class="screen-stat">0.4s</div>
+                  <div class="screen-stat-label">Largest Contentful Paint (LCP)</div>
+                </div>
               </div>
-              <div class="screen-stat-wrap">
-                <div class="screen-stat">0.4s</div>
-                <div class="screen-stat-label">Largest Contentful Paint (LCP)</div>
+              <div class="project-body">
+                <span class="project-category">Plataforma SaaS & Developer Tooling</span>
+                <h3 class="project-name">KRONOS AI</h3>
+                <p class="project-desc">Landing page de conversão e hub de documentação com animações em tempo real e sistema de design sob medida para programadores.</p>
+                <div class="project-tags">
+                  <span class="tag-pill">Next.js 15</span>
+                  <span class="tag-pill">Design System</span>
+                  <span class="tag-pill">+3.4x Registos</span>
+                </div>
               </div>
-            </div>
-            <div class="project-body">
-              <span class="project-category">Plataforma SaaS & Developer Tooling</span>
-              <h3 class="project-name">KRONOS AI</h3>
-              <p class="project-desc">Landing page de conversão e hub de documentação com animações em tempo real e sistema de design sob medida para programadores.</p>
-              <div class="project-tags">
-                <span class="tag-pill">Next.js 15</span>
-                <span class="tag-pill">Design System</span>
-                <span class="tag-pill">+3.4x Registos</span>
-              </div>
-            </div>
-          </article>
+              <div class="t-tilt-glare" aria-hidden="true"></div>
+            </article>
+          </div>
 
           <!-- Card 3 -->
-          <article class="project-card">
-            <div class="project-screen">
-              <div class="browser-bar">
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-url">velacapital.pt</div>
+          <div class="t-tilt">
+            <article class="project-card t-tilt-card">
+              <div class="project-screen">
+                <div class="browser-bar">
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-url">velacapital.pt</div>
+                </div>
+                <div class="screen-stat-wrap">
+                  <div class="screen-stat">100/100</div>
+                  <div class="screen-stat-label">Google Core Web Vitals</div>
+                </div>
               </div>
-              <div class="screen-stat-wrap">
-                <div class="screen-stat">100/100</div>
-                <div class="screen-stat-label">Google Core Web Vitals</div>
+              <div class="project-body">
+                <span class="project-category">Boutique Financeira & Private Equity</span>
+                <h3 class="project-name">VELA Capital</h3>
+                <p class="project-desc">Presença institucional com visual minimalista suíço, segurança rigorosa e relatórios interativos para investidores internacionais.</p>
+                <div class="project-tags">
+                  <span class="tag-pill">Branding Suíço</span>
+                  <span class="tag-pill">TypeScript</span>
+                  <span class="tag-pill">Awwwards Nominee</span>
+                </div>
               </div>
-            </div>
-            <div class="project-body">
-              <span class="project-category">Boutique Financeira & Private Equity</span>
-              <h3 class="project-name">VELA Capital</h3>
-              <p class="project-desc">Presença institucional com visual minimalista suíço, segurança rigorosa e relatórios interativos para investidores internacionais.</p>
-              <div class="project-tags">
-                <span class="tag-pill">Branding Suíço</span>
-                <span class="tag-pill">TypeScript</span>
-                <span class="tag-pill">Awwwards Nominee</span>
-              </div>
-            </div>
-          </article>
+              <div class="t-tilt-glare" aria-hidden="true"></div>
+            </article>
+          </div>
 
           <!-- Card 4 -->
-          <article class="project-card">
-            <div class="project-screen">
-              <div class="browser-bar">
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-dot"></div>
-                <div class="browser-url">urban-studio.arch</div>
+          <div class="t-tilt">
+            <article class="project-card t-tilt-card">
+              <div class="project-screen">
+                <div class="browser-bar">
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-dot"></div>
+                  <div class="browser-url">urban-studio.arch</div>
+                </div>
+                <div class="screen-stat-wrap">
+                  <div class="screen-stat">+240%</div>
+                  <div class="screen-stat-label">Pedidos de Reunião Qualificados</div>
+                </div>
               </div>
-              <div class="screen-stat-wrap">
-                <div class="screen-stat">+240%</div>
-                <div class="screen-stat-label">Pedidos de Reunião Qualificados</div>
+              <div class="project-body">
+                <span class="project-category">Estúdio Internacional de Arquitetura</span>
+                <h3 class="project-name">URBAN Architecture</h3>
+                <p class="project-desc">Portfólio editorial minimalista com transições cinematográficas entre projetos e plantas arquitetónicas interativas.</p>
+                <div class="project-tags">
+                  <span class="tag-pill">Editorial Minimal</span>
+                  <span class="tag-pill">CMS Headless</span>
+                  <span class="tag-pill">Micro-interações</span>
+                </div>
               </div>
-            </div>
-            <div class="project-body">
-              <span class="project-category">Estúdio Internacional de Arquitetura</span>
-              <h3 class="project-name">URBAN Architecture</h3>
-              <p class="project-desc">Portfólio editorial minimalista com transições cinematográficas entre projetos e plantas arquitetónicas interativas.</p>
-              <div class="project-tags">
-                <span class="tag-pill">Editorial Minimal</span>
-                <span class="tag-pill">CMS Headless</span>
-                <span class="tag-pill">Micro-interações</span>
-              </div>
-            </div>
-          </article>
+              <div class="t-tilt-glare" aria-hidden="true"></div>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -1528,7 +1652,7 @@
             <div class="info-card">
               <div class="status-badge" style="margin-bottom: 1.25rem;">
                 <div class="status-dot"></div>
-                <span>Disponível para novos projetos</span>
+                <span class="t-shimmer" data-text="Disponível para novos projetos" style="--shimmer-base: #34d399; --shimmer-highlight: #bbf7d0;">Disponível para novos projetos</span>
               </div>
               <h3 class="info-title">Atendimento Direto</h3>
               <ul class="info-list">
@@ -1679,6 +1803,56 @@
             }
           }
         }
+      }
+
+      // 3D Card Hover Tilt with Cursor-Tracked Glare (transitions-dev: 19-card-tilt)
+      function initTiltCards() {
+        const tiltElements = document.querySelectorAll(".t-tilt");
+        const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+        const MAX = 13; // subtle, high-end 13° lean
+
+        tiltElements.forEach(tilt => {
+          const card = tilt.querySelector(".t-tilt-card");
+          if (!card) return;
+
+          function reset() {
+            tilt.classList.remove("is-hover");
+            card.classList.remove("is-tilting");
+            card.style.setProperty("--tilt-rx", "0deg");
+            card.style.setProperty("--tilt-ry", "0deg");
+          }
+
+          function track(e) {
+            if (reduce.matches) return;
+            const r = tilt.getBoundingClientRect();
+            const px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+            const py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+            tilt.classList.add("is-hover");
+            card.classList.add("is-tilting");
+            card.style.setProperty("--tilt-ry", ((px - 0.5) * MAX).toFixed(2) + "deg");
+            card.style.setProperty("--tilt-rx", ((0.5 - py) * MAX).toFixed(2) + "deg");
+            card.style.setProperty("--tilt-gx", (px * 100).toFixed(1) + "%");
+            card.style.setProperty("--tilt-gy", (py * 100).toFixed(1) + "%");
+          }
+
+          tilt.addEventListener("pointerdown", (e) => {
+            if (e.pointerType !== "mouse") {
+              try { tilt.setPointerCapture(e.pointerId); } catch (_) {}
+            }
+          });
+          tilt.addEventListener("pointermove", track);
+          tilt.addEventListener("pointerup", reset);
+          tilt.addEventListener("pointercancel", reset);
+          tilt.addEventListener("pointerleave", (e) => {
+            if (e.pointerType === "mouse") reset();
+          });
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initTiltCards);
+      } else {
+        initTiltCards();
       }
     </script>
 
